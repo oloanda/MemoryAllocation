@@ -8,6 +8,7 @@ LUANDA Osvaldo Bento - (o.luanda@student.isartdigital.com)
 
 ## FEATURES
 - Memory Allocation
+- OBJ Parser
     
 
 	
