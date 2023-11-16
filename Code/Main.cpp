@@ -196,13 +196,13 @@ int main(int argc, char** argv)
     shaderProgram = CompileShader(&memory);
 
 
-	Model floor = CreateObjVAO("../Assets/floor.obj", &memory);
-    floor.modelMatrix = Scale(vec3(100.0f, 1.0f, 100.0f));
-    floor.modelMatrix = floor.modelMatrix * Translation(vec3(0.0f, 0.0f, 0.0f));
+	Model Floor = CreateObjVAO("../Assets/Floor.obj", &memory);
+    Floor.modelMatrix = Scale(vec3(100.0f, 1.0f, 100.0f));
+    Floor.modelMatrix = Floor.modelMatrix * Translation(vec3(0.0f, 0.0f, 0.0f));
 
-    Model objModel = CreateObjVAO("../Assets/robot.obj", &memory);
-    objModel.modelMatrix = Scale(vec3(2.5f, 2.5f, 2.5f));
-    objModel.modelMatrix = objModel.modelMatrix * Translation(vec3(15.5f, 0.0f, -4.0f));
+    Model Robot = CreateObjVAO("../Assets/robot.obj", &memory);
+    Robot.modelMatrix = Scale(vec3(2.5f, 2.5f, 2.5f));
+    Robot.modelMatrix = Robot.modelMatrix * Translation(vec3(15.5f, 0.0f, -4.0f));
 
     Model SpiderMan = CreateObjVAO("../Assets/Spider-Man.obj", &memory);
     SpiderMan.modelMatrix = Scale(vec3(0.09f, 0.09f, 0.09f));
@@ -258,24 +258,21 @@ int main(int argc, char** argv)
         SetLights(shaderProgram);
         SetVec3(shaderProgram, "uViewPos", cameraPos);
 
-#if 1
         glDisable(GL_BLEND);
         glEnable(GL_DEPTH_TEST);
-        DrawModel(floor,shaderProgram, view * proj);
-        DrawModel(objModel,shaderProgram, view * proj);
+        DrawModel(Floor,shaderProgram, view * proj);
+        DrawModel(Robot,shaderProgram, view * proj);
         DrawModel(Alduin,shaderProgram, view * proj);
         DrawModel(SpiderMan,shaderProgram, view * proj);
 		
         
         if((frameCount / 120) % 2) DrawModel(bunny,shaderProgram, view * proj);
  
-#endif
-
         glfwSwapBuffers(Window);
     }
 
 
-
+    FreeAllMemory(&memory);
     glfwTerminate();
 
     return 0;
