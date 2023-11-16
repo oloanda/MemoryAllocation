@@ -1,8 +1,10 @@
+@ECHO OFF
+
 pushd Build
 
-del Memory.exe 
+del *.exe
 del *.obj
-del *.ilk
 del *.pdb
-
+del NULL
+del *.mp
 popd

@@ -1,5 +1,5 @@
 ## MEMORY ALLOCATION
-This projetc is written in C.
+This projetc is written in C/C++.
 
 
 
@@ -12,14 +12,10 @@ LUANDA Osvaldo Bento - (o.luanda@student.isartdigital.com)
 
 	
 	 
+<img src="ScreenShots/Scene.png">
 
 
-<img src="">
 
-
-## HOW TO USE
-    - You only nned to define the macro MEMORY_IMPLEMENTATION
-    and include the file MyMemory.hThat is all !
 
 
 

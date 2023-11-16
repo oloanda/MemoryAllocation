@@ -1,6 +1,7 @@
 @ECHO OFF
+
 pushd Build
 
-Memory.exe 
+Main.exe
 
 popd
