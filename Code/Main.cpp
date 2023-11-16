@@ -17,7 +17,6 @@
 #include "Quat.h"
 
 #include "Model.h"
-#include "Sprite.h"
 #include "Camera.h"
 
 
@@ -27,8 +26,7 @@ void ProcessInput(GLFWwindow* window, float deltaTime);
 int gScreenWidth = 1024;
 int gScreenHeight = 768;
 
-//-0.4 10 63
-//vec3 cameraPos(0.0f, 5.0f, 20.0f);
+
 vec3 cameraPos(-0.4f, 10.0f, 63.0f);
 vec3 cameraForward(0.0f, 0.0f, -1.0f);
 vec3 cameraUp(0.0f, 1.0f, 0.0f);
@@ -39,47 +37,11 @@ float lastFrame = 0.0f;
 int frameCount = 0;
 int noLights = 0;
 
-
-UPDATE_CAMERA(UpdateCamera)
-{
-    //camera->
-}
-
-unsigned int CompileSpriteShader(Memory* memory)
-{
-    unsigned int shaderID = 0;
-    Shader vertexShader("../Shaders/Sprite.vert",GL_VERTEX_SHADER, memory);
-    Shader fragmentShader("../Shaders/Sprite.frag",GL_FRAGMENT_SHADER, memory);
-
-
-    shaderID = glCreateProgram();
-    glAttachShader(shaderID, vertexShader.index);
-    glAttachShader(shaderID, fragmentShader.index);
-    glLinkProgram(shaderID);
-
-    int success;
-    char infoLog[512] = {0};
-    glGetProgramiv(shaderID, GL_LINK_STATUS, &success);
-    if(!success)
-    {
-        glGetProgramInfoLog(shaderID, 512, NULL, infoLog);
-    }
-
-    glDeleteShader(vertexShader.index);
-    glDeleteShader(fragmentShader.index);
-
-    return shaderID;
-}
-
 unsigned int CompileShader(Memory* memory)
 {
     unsigned int shaderID = 0;
     Shader vertexShader("../Shaders/Basic.vert",GL_VERTEX_SHADER, memory);
     Shader fragmentShader("../Shaders/Basic.frag",GL_FRAGMENT_SHADER, memory);
-#if 0
-    Shader vertexShader("../Shaders/BasicMesh.vert",GL_VERTEX_SHADER, memory);
-    Shader fragmentShader("../Shaders/BasicMesh.frag",GL_FRAGMENT_SHADER, memory);
-#endif
 
     shaderID = glCreateProgram();
     glAttachShader(shaderID, vertexShader.index);
@@ -144,26 +106,6 @@ void SetLights(unsigned int& shader)
 
 }
 
-void DrawSprite(Sprite& sprite, unsigned int& shader)
-{
-    glUseProgram(shader);
-    glBindVertexArray(sprite.VAO);
-
-    mat4 viewProj = SimpleViewProj(1024.0f, 768.0f);
-    mat4 scale = Scale(sprite.diffuseMap.width, sprite.diffuseMap.height,1);
-
-    //sprite.modelMatrix = scale * sprite.modelMatrix;
-    SetMatrix(shader, "uViewProj", viewProj);
-    SetMatrix(shader, "uWorldTransform", sprite.modelMatrix);
-
-    //glUniform1i(glGetUniformLocation(shader,"uDiffuseMap"), 0);
-
-    glBindTexture(GL_TEXTURE_2D, sprite.diffuseMap.index);  
-
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-
-}
-
 void DrawModel(Model& model, unsigned int& shader, const mat4& viewProj)
 {
 
@@ -218,7 +160,6 @@ void DrawModel(Model& model, unsigned int& shader, const mat4& viewProj)
         }
 
         glDrawElements(GL_TRIANGLES, model.meshes[i].indexCount, GL_UNSIGNED_INT, nullptr);
-        //glDrawArrays(GL_TRIANGLES, 0,model.meshes[i].vertexCount);
         
     }
 }
@@ -230,7 +171,6 @@ int main(int argc, char** argv)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, true);
-    //glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, 1);
 
     GLFWwindow* Window = glfwCreateWindow(gScreenWidth, gScreenHeight, "Game Programming", NULL, NULL);
     if(!Window)
@@ -255,17 +195,11 @@ int main(int argc, char** argv)
     unsigned int shaderProgram = 0;
     shaderProgram = CompileShader(&memory);
 
-    unsigned int spriteShader = 0;
-    spriteShader = CompileSpriteShader(&memory);
 
-    
-
-
-    //Model floor = CreateObjVAO("../Assets/WalledCity.obj", &memory);
 	Model floor = CreateObjVAO("../Assets/floor.obj", &memory);
     floor.modelMatrix = Scale(vec3(100.0f, 1.0f, 100.0f));
     floor.modelMatrix = floor.modelMatrix * Translation(vec3(0.0f, 0.0f, 0.0f));
-#if 1
+
     Model objModel = CreateObjVAO("../Assets/robot.obj", &memory);
     objModel.modelMatrix = Scale(vec3(2.5f, 2.5f, 2.5f));
     objModel.modelMatrix = objModel.modelMatrix * Translation(vec3(15.5f, 0.0f, -4.0f));
@@ -278,12 +212,6 @@ int main(int argc, char** argv)
     Model Alduin = CreateObjVAO("../Assets/Alduin.obj", &memory);
     Model bunny = CreateObjVAO("../Assets/bunny.obj", &memory);
 
-    //Model Kelial  = CreateObjVAO("../Assets/SB_PC_BOSS_Kelial.obj", &memory);
-
-#endif
-
-    Sprite sprite = CreateSprite("../Assets/airplane.png");
-    //sprite.modelMatrix = Translation(vec3(400,200, 0));
 
 
     while(!glfwWindowShouldClose(Window))
@@ -297,10 +225,7 @@ int main(int argc, char** argv)
         static float angle  = 0.0f;
         angle += 50.0f * deltaTime;
 
-        //UpdateCamera(&camera,Window ,deltaTime);
 
-
-#if 1
         Alduin.modelMatrix = Scale(vec3(0.03f, 0.03f, 0.03f));
         Alduin.modelMatrix = Alduin.modelMatrix * QuatToMat4(AngleAxis(PiOver2 , vec3(0.0f, 1.0f, 0.0f))); 
         Alduin.modelMatrix = Alduin.modelMatrix * Translation(vec3(0.0f, 15.0f, -2.5f + 10.0f * sinf(DEG2RAD(angle))));
@@ -308,7 +233,7 @@ int main(int argc, char** argv)
         bunny.modelMatrix = Scale(vec3(4.5f, 4.5f, 4.5f));
         bunny.modelMatrix = bunny.modelMatrix * QuatToMat4(AngleAxis(DEG2RAD(-  angle), vec3(0.0f, 1.0f, 0.0f))); 
         bunny.modelMatrix = bunny.modelMatrix * Translation(vec3(0.0f, 0.0f, -5.0f));
-#endif
+
         float x = 3.0f * sinf(DEG2RAD(angle));
         float z = 1.5f + 1.5f * cosf(DEG2RAD(angle));-
         lightPos = vec3(x, 0.0f, z);
@@ -341,18 +266,10 @@ int main(int argc, char** argv)
         DrawModel(Alduin,shaderProgram, view * proj);
         DrawModel(SpiderMan,shaderProgram, view * proj);
 		
-        //DrawModel(Kelial,shaderProgram, view * proj);
+        
         if((frameCount / 120) % 2) DrawModel(bunny,shaderProgram, view * proj);
  
 #endif
-        glDisable(GL_DEPTH_TEST);
-        glEnable(GL_BLEND);
-       	glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
-	    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
-
-        glUseProgram(spriteShader);
-        DrawSprite(sprite, spriteShader);
-
 
         glfwSwapBuffers(Window);
     }
@@ -388,8 +305,6 @@ void ProcessInput(GLFWwindow* window, float deltaTime)
 
     if(glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
         noLights = !noLights;
-    //if(glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        //glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
 
 }
 
