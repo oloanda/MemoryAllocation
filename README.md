@@ -1,6 +1,6 @@
 ## MEMORY ALLOCATION
-This projetc is written in C/C++.
-
+The purpose of this project was to write a memory allocator to load and manage OBJ models.
+It is written in C/C++.
 
 
 ## AUTHORS
